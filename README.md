@@ -72,10 +72,11 @@ Toaster.obj.components.toastWithActions = require("./toastWithAction")
 Toaster.obj.props.timeout.default = 3000
 
 # create a usable mixin for the new toaster
-mixin = require("vue-mixins/getVue")
-mixin.compiled = ->
-  @toaster = Toaster(@getVue())
-module.exports = mixin
+module.exports =
+  methods:
+    getVue: require("vue-mixins/getVue").methods.getVue
+  compiled: ->
+    @toast = creator(@getVue()).toast
 
 # your wrapper would the be included like this:
 # mixins: [require("./wrapperForToast")]
