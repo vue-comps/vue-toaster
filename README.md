@@ -20,6 +20,8 @@ or include `build/bundle.js`.
 components:
   mixins: [
     require("vue-toaster")
+    # or with bundle.js
+    window.vueComps.toaster
   ]
   methods:
     toast: ->
