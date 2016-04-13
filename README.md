@@ -17,22 +17,22 @@ or include `build/bundle.js`.
 # toaster is a singleton and is designed
 # to be used in different places simultaniously
 # default is to use it as a mixin
-components:
-  mixins: [
-    require("vue-toaster")
-    # or with bundle.js
-    window.vueComps.toaster
-  ]
-  methods:
-    toast: ->
-      # this will just create a `<div class="toast">{{options.text}}</div>`
-      # for each toast:
-      toast = @toaster.toast({text:"I'm toast"})
-      toast.close() # to dismiss
-      # the returned object is identical with the options argument:
-      toastIn = {text:"I'm toast"}
-      toastOut = @toaster.toast(toastIn)
-      toastOut === toastIn # true
+# in your component:
+mixins: [
+  require("vue-toaster")
+  # or with bundle.js
+  window.vueComps.toaster
+]
+methods:
+  toast: ->
+    # this will just create a `<div class="toast">{{options.text}}</div>`
+    # for each toast:
+    toast = @toaster.toast({text:"I'm toast"})
+    toast.close() # to dismiss
+    # the returned object is identical with the options argument:
+    toastIn = {text:"I'm toast"}
+    toastOut = @toaster.toast(toastIn)
+    toastOut === toastIn # true
 ```
 
 For examples see [`dev/`](dev/).
