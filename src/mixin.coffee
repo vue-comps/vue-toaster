@@ -2,5 +2,5 @@
 creator = require('./toaster')
 mixin = require("vue-mixins/getVue")
 mixin.compiled = ->
-  @toaster = creator(@getVue())
+  @toast = creator(@getVue()).toast
 module.exports = mixin

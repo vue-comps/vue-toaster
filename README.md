@@ -27,11 +27,11 @@ methods:
   toast: ->
     # this will just create a `<div class="toast">{{options.text}}</div>`
     # for each toast:
-    toast = @toaster.toast({text:"I'm toast"})
+    toast = @toast({text:"I'm toast"})
     toast.close() # to dismiss
     # the returned object is identical with the options argument:
     toastIn = {text:"I'm toast"}
-    toastOut = @toaster.toast(toastIn)
+    toastOut = @toast(toastIn)
     toastOut === toastIn # true
 ```
 

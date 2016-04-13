@@ -1,6 +1,6 @@
 <template lang="jade">
 .container
-  button(@click="toast") Toast
+  button(@click="someToast") Toast
   a(href="https://github.com/vue-comps/vue-overlay/blob/master/dev/basic.vue") source
 </template>
 
@@ -12,8 +12,8 @@ module.exports =
   data: ->
     clicks:0
   methods:
-    toast:  ->
-      @toaster.toast({text:"test#{++@clicks}"})
+    someToast:  ->
+      @toast({text:"test#{++@clicks}"})
 
 </script>
 
