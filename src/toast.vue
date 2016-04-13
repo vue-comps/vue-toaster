@@ -9,5 +9,5 @@ module.exports =
     options:
       type: Object
   beforeDestroy: ->
-    options.cb?()
+    @options.cb?()
 </script>
