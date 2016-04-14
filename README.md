@@ -76,7 +76,7 @@ module.exports =
   methods:
     getVue: require("vue-mixins/getVue").methods.getVue
   compiled: ->
-    @toast = creator(@getVue()).toast
+    @toast = Toaster(@getVue()).toast
 
 # your wrapper would the be included like this:
 # mixins: [require("./wrapperForToast")]
