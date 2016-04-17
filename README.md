@@ -84,10 +84,10 @@ module.exports =
 
 Examples for toasts:
 - [basic toast](src/toast.vue)
-- [materialize toast](https://github.com/paulpflug/vue-materialize/src/toast.vue)
+- [materialize toast](https://github.com/paulpflug/vue-materialize/tree/master/src/toast.vue)
 
 Example for a toaster-wrapper:
-- [materialize toaster](https://github.com/paulpflug/vue-materialize/src/toaster.coffee)
+- [materialize toaster](https://github.com/paulpflug/vue-materialize/tree/master/src/toaster.coffee)
 
 Props defaults you can be changed by wrapping:
 
