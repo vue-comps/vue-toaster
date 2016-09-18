@@ -1,7 +1,6 @@
 # out: ../mixin.js
 creator = require('./toaster')
 module.exports =
-  methods:
-    getVue: require("vue-mixins/getVue").methods.getVue
+  computed: require("vue-mixins/vue").computed
   compiled: ->
-    @toast = creator(@getVue()).toast
+    @toast = creator(@Vue).toast

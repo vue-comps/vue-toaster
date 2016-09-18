@@ -1,6 +1,8 @@
 // out: ..
-<template lang="jade">
-div(:class="options.classes") {{options.text}}
+<template lang="pug">
+div(
+  :class="options.classes"
+  ) {{options.text}}
 </template>
 
 <script lang="coffee">

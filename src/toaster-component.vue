@@ -1,6 +1,10 @@
 // out: ..
-<template lang="jade">
-div(:id="id",:class="classes",:style="{position:'fixed',zIndex:zIndex}")
+<template lang="pug">
+div(
+  :id="id",
+  :class="classes",
+  :style="{position:'fixed',zIndex:zIndex}"
+  )
   component(
     :is="toast.component"
     v-for="toast in toasts",
@@ -48,13 +52,10 @@ module.exports =
 
   el: -> document.createElement "div"
 
-  compiled: ->
-    @$appendTo('body')
-
   beforeDestroy: ->
-    @$remove()
+    document.body.removeChild @$el
 
-  attached: ->
+  ready: ->
     unless @isTop?
       pos = @$el.getBoundingClientRect()
       vpheight = @getViewportSize().height
