@@ -46,17 +46,40 @@ Name | type | default | description
 ---:| --- | ---| ---
 component | String | "toast" | Name of the component to display
 timeout | Number | 2500 | time in milliseconds, when a toast will be closed automatically. The timeout will be halted on `mouseenter` and started again on `mouseleave`
+class | Vue class | ["toast"] | class of the toast element
+transition | String | "toast" | Vue transition to use
+cb | Function | - | will be called on close of toast
 
 These are used in the default toast:
 
 Name | type | default | description
 ---:| --- | ---| ---
 text | String | - | text to display
-classes | Array | ["toast"] | classes of the toast element
-cb | Function | - | will be called on close of toast
 
-#### Customize
-For customization, you need to create a wrapper around `vue-toaster`:
+#### Provide your own toast / transition
+
+You can provide your own toast component and transition with the help of the global Vue instance:
+```js
+Vue.component('toast2', {template: ...})
+Vue.transition('fade', {enter: ...})
+```
+You can then use it in your component:
+```js
+mixins: [require("vue-toaster")],
+methods:{
+  doToast: function() {
+    @toast({text:"I'm toast",component:"toast2",transition:"fade"})
+  }
+}
+```
+
+You can provide a default transition like this:
+```js
+Vue.transition('toast', {enter: ...})
+```
+
+## More than basic customize
+If you want to customize without the use of the global Vue instance, you need to create a wrapper around `vue-toaster`:
 ```coffee
 # get the Toaster constructor
 Toaster = require("vue-toaster/toaster")
@@ -75,8 +98,18 @@ Toaster.obj.props.timeout.default = 3000
 # create a usable mixin for the new toaster
 module.exports =
   computed: require("vue-mixins/vue").computed
-  ready: ->
-    @toast = Toaster(@Vue).toast
+  compiled: ->
+    toaster = Toaster(@Vue)
+    if toaster.used == 0
+      document.body.appendChild toaster.$el
+    toaster.used++
+    @toast = toaster.toast
+  beforeDestroy: ->
+    toaster = Toaster(@Vue)
+    toaster.used--
+    if toaster.used == 0
+      toaster.clear()
+      document.body.removeChild toaster.$el
 
 # your wrapper would the be included like this:
 # mixins: [require("./wrapperForToast")]
@@ -96,14 +129,20 @@ Name | type | default | description
 id | String | "toast-container" | id of the toaster element
 isTop | Boolean | - | when `isTop`, new toasts will be appended, otherwise prepended. This will be detected, when not set
 component | String | "toast" | name of the default component to use for a toast
-classes | Array | function(){return ["toaster"]} | classes for the toaster element
-toastClasses | Array | function(){return ["toaster"]} | default classes for a toast element
+class | Array | function(){return ["toaster"]} | classes for the toaster element
+toastClass | Array | function(){return ["toaster"]} | default classes for a toast element
 zIndex | Number | 10000 | `z-index` of the toaster
 timeout | Number | 2500 | default timeout for a toast
 
 ## Changelog
+- 1.1.0  
+toast now closes on click, can be prevented by a custom toast with `@click.prevent="onClick"`  
+added vue transition  
+renamed `classes` option to `class`  
+properly remove toaster from dom when last using component is destroyed  
+
 - 1.0.0  
-added unit tests
+added unit tests  
 
 # Development
 Clone repository

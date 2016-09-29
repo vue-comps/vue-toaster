@@ -2,12 +2,15 @@
 <template lang="pug">
 div(
   :id="id",
-  :class="classes",
+  :class="class",
   :style="{position:'fixed',zIndex:zIndex}"
   )
   component(
     :is="toast.component"
     v-for="toast in toasts",
+    :transition="toast.transition",
+    :class="toast.class",
+    @click="toast.close",
     :options="toast",
     @close="toast.close",
     @mouseenter="toast.removeTimeout",
@@ -34,10 +37,10 @@ module.exports =
     component:
       type: String
       default: "toast"
-    classes:
+    class:
       type: Array
       default: -> ["toaster"]
-    toastClasses:
+    toastClass:
       type: Array
       default: -> ["toast"]
     zIndex:
@@ -46,14 +49,15 @@ module.exports =
     timeout:
       type: Number
       default: 2500
+    transition:
+      type: String
+      default: "toast"
 
   data: ->
     toasts: []
+    used: 0
 
   el: -> document.createElement "div"
-
-  beforeDestroy: ->
-    document.body.removeChild @$el
 
   ready: ->
     unless @isTop?
@@ -63,15 +67,24 @@ module.exports =
 
 
   methods:
+    clear: ->
+      for toast in @toasts
+        toast.transition = null
+      @toasts = []
     toast: (options={}) ->
       options.component ?= @component
       options.timeout ?= @timeout
-      options.classes ?= @toastClasses
-      options.close = =>
+      options.class ?= @toastClass
+      options.transition ?= @transition
+      options.close = (e) =>
+        if e?
+          return if e.defaultPrevented
+          e.preventDefault()
         index = @toasts.indexOf options
         if index > -1
           @toasts.splice(index,1)
           options.removeTimeout?()
+          options.cb?()
       options.setTimeout = ->
         options.removeTimeout?()
         timeoutObj = setTimeout options.close,options.timeout if options.timeout
@@ -83,5 +96,4 @@ module.exports =
       else
         @toasts.unshift options
       return options
-
 </script>

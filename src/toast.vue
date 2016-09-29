@@ -1,8 +1,6 @@
 // out: ..
 <template lang="pug">
-div(
-  :class="options.classes"
-  ) {{options.text}}
+div(v-text="options.text")
 </template>
 
 <script lang="coffee">
@@ -10,6 +8,4 @@ module.exports =
   props:
     options:
       type: Object
-  beforeDestroy: ->
-    @options.cb?()
 </script>
