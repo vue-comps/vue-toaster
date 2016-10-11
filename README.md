@@ -94,6 +94,9 @@ Vue.component('toaster-transition', {
 ```
 
 ## Changelog
+-  
+using `vue-mixins/transition2`  
+
 - 2.0.0  
 now compatible with vue 2.0.0  
 changed way of using own transition  

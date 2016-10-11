@@ -4,7 +4,7 @@ transition-group(tag="div",
   :id="id",
   :class="cClass",
   :name="transitionName",
-  :is="cTransition",
+  :is="cTransitionGroup",
   :style="{position:'fixed',zIndex:zIndex}",
   )
   component(
@@ -26,7 +26,7 @@ module.exports =
 
   mixins: [
     require("vue-mixins/getViewportSize")
-    require("vue-mixins/vue")
+    require("vue-mixins/transition2")
   ]
 
   components:
@@ -57,16 +57,7 @@ module.exports =
       default: "toaster-transition"
   computed:
     cClass: -> @class
-    cTransition: ->
-      name = @transition
-      @transitionName = "toast"
-      comp = @Vue.util.resolveAsset(@$options,'components',name)
-      if comp?
-        @$options.components[name] = comp
-        @transitionName = null
-      else
-        name = "transition-group"
-      return name
+
   data: ->
     toasts: []
     transitionName: "toast"
