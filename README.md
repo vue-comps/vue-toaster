@@ -11,6 +11,8 @@ A fully customizable toaster.
 
 ```sh
 npm install --save-dev vue-toaster
+// vue@1.0
+npm install --save-dev vue-toaster@1
 ```
 or include `build/bundle.js`.
 
@@ -47,7 +49,7 @@ Name | type | default | description
 component | String | "toast" | Name of the component to display
 timeout | Number | 2500 | time in milliseconds, when a toast will be closed automatically. The timeout will be halted on `mouseenter` and started again on `mouseleave`
 class | Vue class | ["toast"] | class of the toast element
-transition | String | "toast" | Vue transition to use
+style | Vue Style | - | style of the toast element
 cb | Function | - | will be called on close of toast
 
 These are used in the default toast:
@@ -56,85 +58,46 @@ Name | type | default | description
 ---:| --- | ---| ---
 text | String | - | text to display
 
-#### Provide your own toast / transition
+#### Provide your own toast component
 
-You can provide your own toast component and transition with the help of the global Vue instance:
+You can provide your own toast component with the help of the global Vue instance:
 ```js
-Vue.component('toast2', {template: ...})
-Vue.transition('fade', {enter: ...})
+Vue.component('toast2', {template: "<div v-text='options.text'></div>",props:["options"]})
+
 ```
 You can then use it in your component:
 ```js
 mixins: [require("vue-toaster")],
 methods:{
   doToast: function() {
-    @toast({text:"I'm toast",component:"toast2",transition:"fade"})
+    @toast({text:"I'm toast",component:"toast2"})
   }
 }
 ```
 
+#### Provide your own toast transition
 You can provide a default transition like this:
 ```js
-Vue.transition('toast', {enter: ...})
+// must be a transition group
+// be sure to pass down the context data
+Vue.component('toaster-transition', {
+  functional: true
+  render: function(h,context) {
+    context.data.attrs.name = "fade"
+    context.data.props = {css: false}
+    context.data.on = {
+      enter: ...
+    }
+    return h "transition-group",context.data,context.children)
+  }
+})
 ```
-
-## More than basic customize
-If you want to customize without the use of the global Vue instance, you need to create a wrapper around `vue-toaster`:
-```coffee
-# get the Toaster constructor
-Toaster = require("vue-toaster/toaster")
-# change the things you want to change,
-# here the default toast component is
-# replaced by another one
-Toaster.obj.components.toast = require("./toast")
-# you could add other toasts.
-# they would be activated this way:
-# @toaster.toast({component:"toastWithActions",text:"something"})
-Toaster.obj.components.toastWithActions = require("./toastWithAction")
-
-# change a prop default (see below for a list)
-Toaster.obj.props.timeout.default = 3000
-
-# create a usable mixin for the new toaster
-module.exports =
-  computed: require("vue-mixins/vue").computed
-  compiled: ->
-    toaster = Toaster(@Vue)
-    if toaster.used == 0
-      document.body.appendChild toaster.$el
-    toaster.used++
-    @toast = toaster.toast
-  beforeDestroy: ->
-    toaster = Toaster(@Vue)
-    toaster.used--
-    if toaster.used == 0
-      toaster.clear()
-      document.body.removeChild toaster.$el
-
-# your wrapper would the be included like this:
-# mixins: [require("./wrapperForToast")]
-```
-
-Examples for toasts:
-- [basic toast](src/toast.vue)
-- [materialize toast](https://github.com/paulpflug/vue-materialize/tree/master/src/toast.vue)
-
-Example for a toaster-wrapper:
-- [materialize toaster](https://github.com/paulpflug/vue-materialize/tree/master/src/toaster.coffee)
-
-Props defaults you can be changed by wrapping:
-
-Name | type | default | description
----:| --- | ---| ---
-id | String | "toast-container" | id of the toaster element
-isTop | Boolean | - | when `isTop`, new toasts will be appended, otherwise prepended. This will be detected, when not set
-component | String | "toast" | name of the default component to use for a toast
-class | Array | function(){return ["toaster"]} | classes for the toaster element
-toastClass | Array | function(){return ["toaster"]} | default classes for a toast element
-zIndex | Number | 10000 | `z-index` of the toaster
-timeout | Number | 2500 | default timeout for a toast
 
 ## Changelog
+- 2.0.0  
+now compatible with vue 2.0.0  
+changed way of using own transition  
+
 - 1.1.0  
 toast now closes on click, can be prevented by a custom toast with `@click.prevent="onClick"`  
 added vue transition  

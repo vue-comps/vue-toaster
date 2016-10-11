@@ -1,20 +1,23 @@
 // out: ..
 <template lang="pug">
-div(
+transition-group(tag="div",
   :id="id",
-  :class="class",
-  :style="{position:'fixed',zIndex:zIndex}"
+  :class="cClass",
+  :name="transitionName",
+  :is="cTransition",
+  :style="{position:'fixed',zIndex:zIndex}",
   )
   component(
-    :is="toast.component"
+    :key="toast"
     v-for="toast in toasts",
-    :transition="toast.transition",
+    :is="toast.component",
     :class="toast.class",
-    @click="toast.close",
+    :style="toast.style",
+    @click.native="toast.close",
     :options="toast",
     @close="toast.close",
-    @mouseenter="toast.removeTimeout",
-    @mouseleave="toast.setTimeout"
+    @mouseenter.native="toast.removeTimeout",
+    @mouseleave.native="toast.setTimeout"
     )
 </template>
 
@@ -23,6 +26,7 @@ module.exports =
 
   mixins: [
     require("vue-mixins/getViewportSize")
+    require("vue-mixins/vue")
   ]
 
   components:
@@ -50,16 +54,25 @@ module.exports =
       type: Number
       default: 2500
     transition:
-      type: String
-      default: "toast"
-
+      default: "toaster-transition"
+  computed:
+    cClass: -> @class
+    cTransition: ->
+      name = @transition
+      @transitionName = "toast"
+      comp = @Vue.util.resolveAsset(@$options,'components',name)
+      if comp?
+        @$options.components[name] = comp
+        @transitionName = null
+      else
+        name = "transition-group"
+      return name
   data: ->
     toasts: []
+    transitionName: "toast"
     used: 0
 
-  el: -> document.createElement "div"
-
-  ready: ->
+  mounted: -> @$nextTick ->
     unless @isTop?
       pos = @$el.getBoundingClientRect()
       vpheight = @getViewportSize().height
@@ -75,7 +88,6 @@ module.exports =
       options.component ?= @component
       options.timeout ?= @timeout
       options.class ?= @toastClass
-      options.transition ?= @transition
       options.close = (e) =>
         if e?
           return if e.defaultPrevented

@@ -4,29 +4,32 @@ describe "toaster", ->
 
   describe "basic env", ->
 
-    before ->
+    before (done) ->
       env = loadComp(require("../dev/basic.vue"))
-      toaster = require("../src/toaster.coffee")()
+      env.$nextTick ->
+        toaster = require("../src/toaster.coffee")()
+        done()
     after ->
       unloadComp(env)
 
     it "should work", (done) ->
       env.toast({text:"test",timeout:50})
       env.$nextTick ->
-        toaster.$children.length.should.equal 1
-        toast = toaster.$children[0].$el
+        toaster.$el.childNodes.length.should.equal 1
+        toast = toaster.$el.firstChild
         toast.should.have.text("test")
         toast.should.have.class("toast")
         setTimeout (->
-          toaster.$children.length.should.equal 0
+          toaster.$el.childNodes.length.should.equal 0
           done()
-          ),50
+          ),200
 
     it "should close", (done) ->
       {close} = env.toast({text:"test",timeout:5000})
       env.$nextTick ->
-        toaster.$children.length.should.equal 1
+        toaster.$el.childNodes.length.should.equal 1
         close()
-        env.$nextTick ->
-          toaster.$children.length.should.equal 0
+        setTimeout (->
+          toaster.$el.childNodes.length.should.equal 0
           done()
+          ),150
